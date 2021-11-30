@@ -13,11 +13,13 @@
 #include <dirent.h>
 
 #define NOME_SIZE 51 //arbitrário + 1 terminador de string
+#define CURSO_SIZE 26 //mema joça
 #define PRONT_SIZE 8 //de acordo com os números de prontuário da IF + um terminador de string
 
 struct aluno{
 	char prontuario[PRONT_SIZE];
 	float nota1, nota2;
+	char curso[CURSO_SIZE];
 	char nome[NOME_SIZE];
 };
 
@@ -49,7 +51,7 @@ int main(){
 		    DIR* cwd = opendir(".");
 			while((entry = readdir(cwd)) != NULL){
 				if(!strcmp(entry->d_name, "Alunos.dat")){
-					printf("O arquivo Alunos.dat já existe. Deseja apagar e criar de novo o arquivo? [s/n]\n");
+					printf("O arquivo Alunos.dat ja existe. Deseja apagar e criar de novo o arquivo? [s/n]\n");
 					while((input = getchar()) != EOF){
 						if(input == 'S' || input == 's'){
 							remove("./Alunos.dat");
@@ -78,14 +80,36 @@ int main(){
 		}
 		case '2':
 		    {
-			struct aluno a = {"1234567", 1.0, 1.0, "Jacington P."};
-			//TODO: ler os dados aqui...
-			//tamanho de nome: definido nos #defines
-			//tamanho de prontuário: tá nos #defines também
-			
-			
+
+			getchar();
+
+			char nome[NOME_SIZE+1], curso[CURSO_SIZE+1], prontuario[PRONT_SIZE+1];
+			struct aluno a = {"1234567", 1.0, 1.0, "Ligmologia", "Jacington P."};
+
+			printf("Nome do Aluno: ");
+			fgets(nome, NOME_SIZE+1, stdin);
+			nome[strlen(nome)-1]='\0';
+
+			printf("Prontuario do Aluno: ");
+			fgets(prontuario, PRONT_SIZE+1, stdin);
+			prontuario[strlen(prontuario)-1]='\0';
+
+			printf("Curso do Aluno: ");
+			fgets(curso, CURSO_SIZE+1, stdin);
+			curso[strlen(curso)-1]='\0';
+
+			strcpy(a.nome, nome);
+			strcpy(a.curso, curso);
+			strcpy(a.prontuario, prontuario);
+
+			printf("Nota 1: ");
+			scanf("%f", &a.nota1);
+
+			printf("Nota 2: ");
+			scanf("%f", &a.nota2);
+
 			if((f_handle = fopen("./Alunos.dat", "rb+")) ==  NULL){
-				printf("Erro na abertura do arquivo Alunos.dat! Certifique-se que o arquivo foi criado usando a função 1.");
+				printf("Erro na abertura do arquivo Alunos.dat! Certifique-se que o arquivo foi criado usando a funcao 1.");
 				break;
 			}
 			fread(&len, sizeof(int), 1, f_handle);
@@ -105,36 +129,122 @@ int main(){
 		case '3':
 		{
 			if((f_handle = fopen("./Alunos.dat", "rb")) ==  NULL){
-				printf("Erro na abertura do arquivo Alunos.dat! Certifique-se que o arquivo foi criado usando a função 1.");
+				printf("Erro na abertura do arquivo Alunos.dat! Certifique-se que o arquivo foi criado usando a funcao 1.");
 				break;
 			}
 			struct aluno a;
 			fread(&len, sizeof(int), 1, f_handle);
 			
 			if(len){
-			printf("| Nome do Aluno | Prontuário | Média |\n" );
+			printf("| Nome do Aluno | Prontuario | Curso | Media |\n" );
 			for(int i = 0; i < len; i++){
 				fread(&a, sizeof(struct aluno), 1, f_handle);
-				printf("%s %s %.2f\n", a.nome, a.prontuario, (a.nota1+a.nota2)/2);
+				printf("%s %s %s %.2f\n", a.nome, a.prontuario, a.curso, (a.nota1+a.nota2)/2);
 			}}
 			else{
+				printf("Nada consta.\n");
+			}
+			enter_to_continue();
+			break;
+		}
+		case '4':
+		{
+			getchar();
+			printf("Curso: ");
+			char curso_in[CURSO_SIZE + 1]; //+1 pra acomodar o newline.
+			char wrote = 0;
+			fgets(curso_in, 26, stdin);
+			curso_in[strlen(curso_in)-1] = '\0'; //tirar o newline
+			if((f_handle = fopen("./Alunos.dat", "rb")) ==  NULL){
+				printf("Erro na abertura do arquivo Alunos.dat! Certifique-se que o arquivo foi criado usando a funcao 1.");
+				break;
+			}
+			struct aluno a;
+			fread(&len, sizeof(int), 1, f_handle);
+			
+			if(len){
+			printf("| Nome do Aluno |\n" );
+			for(int i = 0; i < len; i++){
+				fread(&a, sizeof(struct aluno), 1, f_handle);
+				if(!strcmp(a.curso, curso_in)){printf("%s\n", a.nome);wrote=1;}
+			}}
+			if(!wrote){
+				printf("Nada consta.\n");
+			}
+			enter_to_continue();
+			break;
+		}
+		case '5':
+		{
+			char wrote = 0;
+			if((f_handle = fopen("./Alunos.dat", "rb")) ==  NULL){
+				printf("Erro na abertura do arquivo Alunos.dat! Certifique-se que o arquivo foi criado usando a funcao 1.");
+				break;
+			}
+			struct aluno a;
+			fread(&len, sizeof(int), 1, f_handle);
+			
+			if(len){
+			printf("| Nome do Aluno | Prontuario | Media |\n" );
+			for(int i = 0; i < len; i++){
+				fread(&a, sizeof(struct aluno), 1, f_handle);
+				if((a.nota1+a.nota2)/2 >= 6.0){printf("%s | %s | %.2f\n", a.nome, a.prontuario, (a.nota1+a.nota2)/2);wrote=1;}
+			}}
+			if(!wrote){
 				printf("Nada consta.\n");
 			}
 			enter_to_continue();
 			getchar();
 			break;
 		}
-		case '4':
-			break;
-
-		case '5':
-			break;
 
 		case '6':
+			{
+			char wrote = 0;
+			if((f_handle = fopen("./Alunos.dat", "rb")) ==  NULL){
+				printf("Erro na abertura do arquivo Alunos.dat! Certifique-se que o arquivo foi criado usando a funcao 1.");
+				break;
+			}
+			struct aluno a;
+			fread(&len, sizeof(int), 1, f_handle);
+			
+			if(len){
+			printf("| Nome do Aluno | Prontuario | Media |\n" );
+			for(int i = 0; i < len; i++){
+				fread(&a, sizeof(struct aluno), 1, f_handle);
+				if((a.nota1+a.nota2)/2 < 4.0){printf("%s %s %.2f\n", a.nome, a.prontuario, (a.nota1+a.nota2)/2);wrote=1;}
+			}}
+			if(!wrote){
+				printf("Nada consta.\n");
+			}
+			enter_to_continue();
+			getchar();
 			break;
+		}
 
 		case '7':
+			{
+			char wrote = 0;
+			if((f_handle = fopen("./Alunos.dat", "rb")) ==  NULL){
+				printf("Erro na abertura do arquivo Alunos.dat! Certifique-se que o arquivo foi criado usando a funcao 1.");
+				break;
+			}
+			struct aluno a;
+			fread(&len, sizeof(int), 1, f_handle);
+			
+			if(len){
+			printf("| Nome do Aluno | Prontuario | Media |\n" );
+			for(int i = 0; i < len; i++){
+				fread(&a, sizeof(struct aluno), 1, f_handle);
+				if((a.nota1+a.nota2)/2 >= 4.0 && (a.nota1+a.nota2)/2 < 6.0){printf("%s %s %.2f\n", a.nome, a.prontuario, (a.nota1+a.nota2)/2);wrote=1;}
+			}}
+			if(!wrote){
+				printf("Nada consta.\n");
+			}
+			enter_to_continue();
+			getchar();
 			break;
+		}
 
 		case '8':
 			return 0;
