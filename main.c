@@ -1,12 +1,3 @@
-//AVISO: COMPILAR COM A OPÇÃO -lm 
-
-#ifdef WINDOWS
-#include <direct.h>
-#else
-#include <unistd.h>
-#endif
-//includes de plataforma aqui.
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -128,6 +119,7 @@ int main(){
 			}
 		case '3':
 		{
+			getchar();
 			if((f_handle = fopen("./Alunos.dat", "rb")) ==  NULL){
 				printf("Erro na abertura do arquivo Alunos.dat! Certifique-se que o arquivo foi criado usando a funcao 1.");
 				break;
@@ -139,7 +131,7 @@ int main(){
 			printf("| Nome do Aluno | Prontuario | Curso | Media |\n" );
 			for(int i = 0; i < len; i++){
 				fread(&a, sizeof(struct aluno), 1, f_handle);
-				printf("%s %s %s %.2f\n", a.nome, a.prontuario, a.curso, (a.nota1+a.nota2)/2);
+				printf("%s | %s | %s | %.2f\n", a.nome, a.prontuario, a.curso, (a.nota1+a.nota2)/2);
 			}}
 			else{
 				printf("Nada consta.\n");
@@ -212,7 +204,7 @@ int main(){
 			printf("| Nome do Aluno | Prontuario | Media |\n" );
 			for(int i = 0; i < len; i++){
 				fread(&a, sizeof(struct aluno), 1, f_handle);
-				if((a.nota1+a.nota2)/2 < 4.0){printf("%s %s %.2f\n", a.nome, a.prontuario, (a.nota1+a.nota2)/2);wrote=1;}
+				if((a.nota1+a.nota2)/2 < 4.0){printf("%s | %s | %.2f\n", a.nome, a.prontuario, (a.nota1+a.nota2)/2);wrote=1;}
 			}}
 			if(!wrote){
 				printf("Nada consta.\n");
@@ -236,7 +228,7 @@ int main(){
 			printf("| Nome do Aluno | Prontuario | Media |\n" );
 			for(int i = 0; i < len; i++){
 				fread(&a, sizeof(struct aluno), 1, f_handle);
-				if((a.nota1+a.nota2)/2 >= 4.0 && (a.nota1+a.nota2)/2 < 6.0){printf("%s %s %.2f\n", a.nome, a.prontuario, (a.nota1+a.nota2)/2);wrote=1;}
+				if((a.nota1+a.nota2)/2 >= 4.0 && (a.nota1+a.nota2)/2 < 6.0){printf("%s | %s | %.2f\n", a.nome, a.prontuario, (a.nota1+a.nota2)/2);wrote=1;}
 			}}
 			if(!wrote){
 				printf("Nada consta.\n");
